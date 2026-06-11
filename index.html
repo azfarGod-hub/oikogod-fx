@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>OIKOGOD FX</title>
+</head>
+
+<body>
+
+<h1>OIKOGOD FX</h1>
+
+<h3>Upload Analisa</h3>
+
+<input id="title" placeholder="Judul analisa"><br><br>
+<textarea id="content" placeholder="Isi analisa"></textarea><br><br>
+
+<button onclick="post()">Upload</button>
+
+<hr>
+
+<h2>Postingan</h2>
+<div id="posts"></div>
+
+<script type="module">
+import { supabase } from './supabase.js';
+
+window.post = async function () {
+  const title = document.getElementById('title').value;
+  const content = document.getElementById('content').value;
+
+  await supabase.from('posts').insert([
+    { title, content }
+  ]);
+
+  load();
+}
+
+async function load() {
+  const { data } = await supabase.from('posts').select();
+
+  document.getElementById('posts').innerHTML =
+    data.reverse().map(p => `
+      <div style="border:1px solid #ccc; padding:10px; margin:10px;">
+        <h3>${p.title}</h3>
+        <p>${p.content}</p>
+      </div>
+    `).join('');
+}
+
+load();
+</script>
+
+</body>
+</html>
